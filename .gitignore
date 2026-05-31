@@ -1,0 +1,9 @@
+*.a
+*.so
+*.dll
+*.dylib
+*.o
+*.obj
+*.wheel
+*.whl
+build/
