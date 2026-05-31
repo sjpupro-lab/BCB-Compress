@@ -75,7 +75,7 @@ deltas) with realistic skew. Not wasteful JSON — a hand-optimized binary packe
 Tight bit-packing fixes field *widths*; it leaves the skewed *value* distribution untouched. BCB reclaims
 that. On random data it correctly does nothing.
 
-### Small text-like messages (synthetic, `make msgbench-landmark`)
+### Small text-like messages (synthetic)
 
 |scenario    |size |BCB+landmark|brotli+dict|zstd+dict|
 |------------|-----|------------|-----------|---------|
@@ -84,7 +84,7 @@ that. On random data it correctly does nothing.
 |RPC         |64 B |**4.00×**   |1.91×      |2.08×    |
 |syslog      |64 B |**3.44×**   |1.95×      |1.72×    |
 
-### Fixed-record binary (synthetic, `make structural-bench`)
+### Fixed-record binary (synthetic)
 
 binary_record 32 B **5.35×** · IoT 18 B **3.99×** · Modbus 25 B **3.67×** · CAN 16 B **3.91×** —
 LZ family ~0.95× (inflates) on these.
@@ -100,18 +100,25 @@ LZ family ~0.95× (inflates) on these.
 BCB wins HPACK cold-start ~3× (CDN / stateless / first request). HPACK *warm* (long-lived connection,
 populated dynamic table) wins repeated requests; BCB still wins responses.
 
-### Reproduce
+### Verify on your own data
+
+BCB is distributed as **prebuilt binaries** (see [Releases](../../releases)). The figures above are not
+something you have to take on trust — reproduce them on *your* traffic with the evaluation build:
 
 ```sh
-sudo apt-get install -y build-essential libbrotli-dev libzstd-dev
-make msgbench-landmark      # small text-like messages
-make structural-bench       # fixed-record binary
-python3 tools/bcb_vs_hpack.py --bcb-build build      # vs HPACK
-sh tests/corpus/fetch_iot_real.sh && \
-  build/bcb-realbench --corpus build/real_iot_int.corpus --record-size 10 \
-    --recs-per-msg 8 --train-msgs 9000 --max-test 5000 --mode structural   # real sensor data
+# 1. Download the platform bundle from Releases (libbcb + bcb.h + bcb-cli + bcb-prior-build)
+# 2. Train a prior on a sample of your own messages
+bcb-prior-build your_sample.bin your.bcb-prior --schema-record-size <N>   # structured/binary
+#   or:        your_sample.txt your.bcb-prior --landmark-k 512            # text-like
+
+# 3. Compress your messages and confirm ratio + lossless round-trip
+bcb-cli encode msg.bin msg.bcb --prior your.bcb-prior
+bcb-cli decode msg.bcb msg.out --prior your.bcb-prior
+cmp msg.bin msg.out && echo "lossless OK"
 ```
 
+This is the honest test: your data, your packet sizes, your numbers. A **30-day evaluation license** is
+available for exactly this — including a head-to-head against whatever you run today.
 Methodology (shared-prior setup, byte definition, train/sample sizes, lossless checks) is in
 [`docs/benchmarks.md`](docs/benchmarks.md) and [`docs/benchmarks_real.md`](docs/benchmarks_real.md).
 
@@ -143,23 +150,17 @@ bcb_prior_close(p);
 - One-shot + `BcbEncoder`/`BcbDecoder` handles; `bcb_compress_bound`, `bcb_prior_id`, `bcb_strerror`, `bcb_version`.
 - **Thread-safe:** per-handle state; priors/LUTs shared read-only (same prior usable concurrently).
 - **CRC32 integrity** (default on) → `BCB_ERR_CORRUPTED`; **prior-id** (SHA-256/16 B) catches prior mismatch.
-- **Python bindings** (`bindings/python/`, cffi). Reference: [`docs/api.md`](docs/api.md).
+- **Python bindings** available as a wheel in [Releases](../../releases). API reference: [`docs/api.md`](docs/api.md).
+
+**Linking against the prebuilt library** — download the platform bundle from
+[Releases](../../releases), then point your build at the included `bcb.h` and `libbcb`:
 
 ```sh
-cmake -S . -B build -DCMAKE_BUILD_TYPE=Release && cmake --build build
-ctest --test-dir build --output-on-failure        # includes round-trip lossless
-cmake --install build --prefix /usr/local          # find_package(bcb) / pkg-config
+cc your_app.c -I/path/to/bcb/include -L/path/to/bcb/lib -lbcb -o your_app
 ```
 
-### CLI / prior build
-
-```sh
-build/bcb-prior-build train.txt out.bcb-prior --train-size 50000          # base BT prior
-build/bcb-prior-build train.txt out.bcb-prior --landmark-k 512            # + landmark (text-like)
-build/bcb-prior-build train.bin out.bcb-prior --schema-record-size 18     # structural (binary)
-build/bcb-cli encode msg.bin out.bcb --prior out.bcb-prior
-build/bcb-cli decode out.bcb msg.out --prior out.bcb-prior
-```
+A CMake consumer example (`find_package(bcb)` / direct link) is in [`examples/`](examples/).
+No source build is required or provided.
 
 -----
 
@@ -172,8 +173,6 @@ enhancements (all integer-quantized, lossless):
 - **landmark** — sharper distributions on frequent contexts (text-like messages).
 - **structural** — position-aware byte/delta distributions for fixed-layout records (IoT/binary).
 - **mmap prior** — shared prior file → instant start, no retraining (300 KB prior: 3.74 s → 0.028 s).
-
-Math mapping and design rationale: [`docs/theory.md`](docs/theory.md).
 
 -----
 
