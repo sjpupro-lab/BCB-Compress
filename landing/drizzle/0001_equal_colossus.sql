@@ -1,0 +1,23 @@
+CREATE TABLE `leads` (
+	`id` varchar(32) NOT NULL,
+	`createdAt` timestamp NOT NULL DEFAULT (now()),
+	`email` varchar(320) NOT NULL,
+	`company` varchar(255),
+	`useCase` varchar(64),
+	`dataType` varchar(32),
+	`avgPacketSize` int,
+	`packetsPerSec` int,
+	`deviceCount` int,
+	`networkType` varchar(32),
+	`dataPricePerGb` double,
+	`ratioUsed` double,
+	`savingsPct` int,
+	`monthlySaved` varchar(64),
+	`monthlyCostSaved` double,
+	`hwNote` text,
+	`overLimitNote` text,
+	`lang` enum('EN','KO') NOT NULL DEFAULT 'EN',
+	`status` enum('new','notified','interested','contacted') NOT NULL DEFAULT 'new',
+	`clickedAt` timestamp,
+	CONSTRAINT `leads_id` PRIMARY KEY(`id`)
+);
