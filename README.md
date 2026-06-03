@@ -84,10 +84,26 @@ that. On random data it correctly does nothing.
 |RPC         |64 B |**4.00×**   |1.91×      |2.08×    |
 |syslog      |64 B |**3.44×**   |1.95×      |1.72×    |
 
-### Fixed-record binary (synthetic)
+### Fixed-record binary, per-packet
 
-binary_record 32 B **5.35×** · IoT 18 B **3.99×** · Modbus 25 B **3.67×** · CAN 16 B **3.91×** —
-LZ family ~0.95× (inflates) on these.
+How edge IoT actually ships data — one packet per LoRa / NB-IoT / BLE frame, compressed on its
+own. Best LZ rival shown; ✗MCU = does not fit the target hardware.
+
+|record (per-packet)|BCB      |best LZ rival (✗MCU)|
+|-------------------|---------|--------------------|
+|quantized int, 20 B|**1.60×**|0.84× (inflates)    |
+|quantized int, 40 B|**2.61×**|0.98×               |
+|quantized int, 80 B|**2.13×**|1.29×               |
+|float32, 88 B      |**2.25×**|1.52×               |
+|Modbus, 25 B       |**6.7×** |~0.95× (inflates)   |
+|CAN, 16 B          |**4.3×** |~0.95× (inflates)   |
+
+At MCU/edge packet sizes BCB is the only strong compressor that runs at all — brotli and zstd
+inflate here and don’t fit the target hardware.
+
+> Per-packet, each message compressed independently. Quantized-int = R=10 scaled integers
+> (Modbus/CAN-style); float32 = R=22 raw IEEE-754. Modbus/CAN = schema prior. Full method and
+> per-codec columns: [`docs/benchmarks_real.md`](docs/benchmarks_real.md).
 
 ### vs HPACK (RFC 7541), identical header blocks
 
