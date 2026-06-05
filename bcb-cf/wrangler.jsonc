@@ -1,0 +1,39 @@
+// wrangler.jsonc — BCB landing on Cloudflare Workers
+{
+  "name": "bcb-landing",
+  "main": "src/worker.ts",
+  "compatibility_date": "2025-03-07",
+  "compatibility_flags": ["nodejs_compat"],
+
+  // Serve the Vite build output. The Worker handles /api/* and falls through
+  // to static assets for everything else.
+  "assets": {
+    "directory": "./dist",
+    "binding": "ASSETS"
+  },
+
+  // D1 database for tester leads.
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "bcb-leads",
+      "database_id": "da0611d7-2e7c-4bad-b3d1-39aa7d6a6d0d",
+      "migrations_dir": "migrations"
+    }
+  ],
+
+  // Outbound email for owner lead notifications. `destination_address` must be a
+  // verified destination in Cloudflare Email Routing, and the sender domain
+  // (leads@bcb-lab.com) must have Email Routing enabled.
+  "send_email": [
+    {
+      "name": "SEND_EMAIL",
+      "destination_address": "jahyag@gmail.com"
+    }
+  ],
+
+  "observability": {
+    "enabled": true,
+    "head_sampling_rate": 1
+  }
+}
