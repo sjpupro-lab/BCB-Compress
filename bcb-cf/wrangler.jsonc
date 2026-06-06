@@ -32,6 +32,12 @@
     }
   ],
 
+  // Public custom domains served by this Worker (DNS + cert auto-managed).
+  "routes": [
+    { "pattern": "bcb-lab.com", "custom_domain": true },
+    { "pattern": "www.bcb-lab.com", "custom_domain": true }
+  ],
+
   "observability": {
     "enabled": true,
     "head_sampling_rate": 1
