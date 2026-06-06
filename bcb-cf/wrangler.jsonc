@@ -32,9 +32,13 @@
     }
   ],
 
+  // Keep the *.workers.dev URL enabled alongside custom domains.
+  "workers_dev": true,
+
   // Public custom domains served by this Worker (DNS + cert auto-managed).
+  // NOTE: the apex `bcb-lab.com` is attached out-of-band (its pre-existing DNS
+  // record must be replaced first); only `www` is managed here for now.
   "routes": [
-    { "pattern": "bcb-lab.com", "custom_domain": true },
     { "pattern": "www.bcb-lab.com", "custom_domain": true }
   ],
 
