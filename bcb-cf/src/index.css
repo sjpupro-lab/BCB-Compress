@@ -229,3 +229,19 @@
 .bcb .items .rm { border: none; background: transparent; color: var(--ink-faint); font-size: 18px; line-height: 1; cursor: pointer; padding: 0 4px; }
 .bcb .items .rm:hover { color: var(--bcb-accent-2); }
 .bcb .apply-done #msg { font-size: 15px; }
+
+/* ---- Raw payload extractor (apply page) ---- */
+.bcb .payload-extract .payload-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+.bcb .payload-extract textarea { background: #fff; border: 1px solid var(--rule-strong); outline: none; font-family: var(--bcb-mono); font-size: 13px; line-height: 1.5; padding: 11px 12px; color: var(--bcb-ink); width: 100%; min-height: 104px; resize: vertical; border-radius: 2px; }
+.bcb .payload-extract textarea:focus { border-color: var(--bcb-accent); }
+.bcb .mode-toggle { display: inline-flex; align-items: center; gap: 6px; }
+.bcb .mode-toggle .mt-label { font-family: var(--bcb-mono); font-size: 11px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink-faint); }
+.bcb .mode-toggle .mt-btn { font-family: var(--bcb-mono); font-size: 12px; background: #fff; color: var(--ink-soft); border: 1px solid var(--rule-strong); border-radius: 2px; padding: 4px 10px; cursor: pointer; transition: 0.15s; }
+.bcb .mode-toggle .mt-btn:hover { border-color: var(--bcb-accent); color: var(--bcb-ink); }
+.bcb .mode-toggle .mt-btn.active { background: var(--bcb-accent); border-color: var(--bcb-accent); color: var(--paper); }
+.bcb .payload-foot { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; margin-top: 10px; }
+.bcb .payload-foot .add { font-family: var(--bcb-mono); font-size: 14px; background: var(--bcb-ink); color: var(--paper); border: none; border-radius: 2px; padding: 0 18px; min-height: 40px; cursor: pointer; white-space: nowrap; transition: 0.15s; }
+.bcb .payload-foot .add:hover { background: var(--bcb-accent); }
+.bcb .payload-status { font-family: var(--bcb-mono); font-size: 12.5px; line-height: 1.5; }
+.bcb .payload-status.is-ok { color: var(--bcb-accent); }
+.bcb .payload-status.is-note { color: var(--bcb-accent-2); }
