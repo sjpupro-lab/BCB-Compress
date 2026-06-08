@@ -92,6 +92,22 @@ type Content = {
     emptyHint: string;
     removeLabel: string;
     back: string;
+    payload: {
+      label: string;
+      hint: string;
+      placeholder: string;
+      extractBtn: string;
+      modeLabel: string;
+      modeAuto: string;
+      modeHex: string;
+      modeBase64: string;
+      /** "감지: {platform} · {len} B" 형태로 채워질 템플릿. {len}은 중립 표기. */
+      detected: (platform: string, len: number) => string;
+      /** raw가 아니라 이미 디코딩된 export일 때의 안내(오류 아님). */
+      decodedOnly: string;
+      /** 그 외 파싱 실패 시 가벼운 안내. */
+      checkFormat: string;
+    };
   };
 };
 
@@ -278,6 +294,20 @@ export const CONTENT: Record<Lang, Content> = {
       emptyHint: "추가된 데이터 항목이 없습니다. 종류를 고르고 값을 입력해 추가하세요.",
       removeLabel: "삭제",
       back: "← 메인으로",
+      payload: {
+        label: "페이로드 샘플 (선택)",
+        hint: "TTN·ChirpStack·AWS IoT 등의 export를 통째로 붙여넣으면 raw 페이로드를 자동으로 찾아냅니다. hex·base64 문자열을 바로 붙여넣어도 됩니다.",
+        placeholder: '플랫폼 export 또는 hex / base64를 붙여넣으세요\n예) {"frm_payload":"AQIDBA=="}',
+        extractBtn: "추출",
+        modeLabel: "형식",
+        modeAuto: "자동",
+        modeHex: "Hex",
+        modeBase64: "Base64",
+        detected: (platform, len) => `감지: ${platform} · ${len} B`,
+        decodedOnly:
+          "이미 디코딩된 데이터입니다. raw 페이로드(frm_payload·data·PayloadData)가 포함된 export를 올려주세요.",
+        checkFormat: "형식을 확인해주세요. hex·base64 또는 플랫폼 export JSON을 붙여넣어 주세요.",
+      },
     },
   },
 
@@ -463,6 +493,20 @@ export const CONTENT: Record<Lang, Content> = {
       emptyHint: "No data items yet. Pick a type, enter a value, and add it.",
       removeLabel: "Remove",
       back: "← Back to main",
+      payload: {
+        label: "Payload sample (optional)",
+        hint: "Paste a full export from TTN, ChirpStack, AWS IoT and we find the raw payload automatically. A plain hex or base64 string works too.",
+        placeholder: 'Paste a platform export, or hex / base64\ne.g. {"frm_payload":"AQIDBA=="}',
+        extractBtn: "Extract",
+        modeLabel: "Format",
+        modeAuto: "Auto",
+        modeHex: "Hex",
+        modeBase64: "Base64",
+        detected: (platform, len) => `Detected: ${platform} · ${len} B`,
+        decodedOnly:
+          "This looks already decoded. Please upload an export that still contains the raw payload (frm_payload · data · PayloadData).",
+        checkFormat: "Please check the format — paste hex, base64, or a platform export JSON.",
+      },
     },
   },
 };
