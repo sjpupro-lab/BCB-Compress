@@ -103,7 +103,7 @@ inflate here and don’t fit the target hardware.
 
 > Per-packet, each message compressed independently. Quantized-int = R=10 scaled integers
 > (Modbus/CAN-style); float32 = R=22 raw IEEE-754. Modbus/CAN = schema prior. Full method and
-> per-codec columns: [`docs/benchmarks_real.md`](docs/benchmarks_real.md).
+> per-codec columns: [`docs/benchmarks_real.md`](https://github.com/sjpupro-lab/bcb/blob/main/docs/benchmarks_real.md) (dev repo).
 
 ### vs HPACK (RFC 7541), identical header blocks
 
@@ -136,7 +136,7 @@ cmp msg.bin msg.out && echo "lossless OK"
 This is the honest test: your data, your packet sizes, your numbers. A **30-day evaluation license** is
 available for exactly this — including a head-to-head against whatever you run today.
 Methodology (shared-prior setup, byte definition, train/sample sizes, lossless checks) is in
-[`docs/benchmarks.md`](docs/benchmarks.md) and [`docs/benchmarks_real.md`](docs/benchmarks_real.md).
+[`docs/benchmarks.md`](https://github.com/sjpupro-lab/bcb/blob/main/docs/benchmarks.md) and [`docs/benchmarks_real.md`](https://github.com/sjpupro-lab/bcb/blob/main/docs/benchmarks_real.md) (dev repo).
 
 -----
 
@@ -152,7 +152,7 @@ Full analysis: [`docs/compare.md`](docs/compare.md).
 
 -----
 
-## Library / API (`include/bcb.h`)
+## Library / API ([`include/bcb.h`](https://github.com/sjpupro-lab/bcb/blob/main/include/bcb.h), dev repo)
 
 ```c
 #include "bcb.h"
@@ -166,7 +166,7 @@ bcb_prior_close(p);
 - One-shot + `BcbEncoder`/`BcbDecoder` handles; `bcb_compress_bound`, `bcb_prior_id`, `bcb_strerror`, `bcb_version`.
 - **Thread-safe:** per-handle state; priors/LUTs shared read-only (same prior usable concurrently).
 - **CRC32 integrity** (default on) → `BCB_ERR_CORRUPTED`; **prior-id** (SHA-256/16 B) catches prior mismatch.
-- **Python bindings** available as a wheel in [Releases](../../releases). API reference: [`docs/api.md`](docs/api.md).
+- **Python bindings** available as a wheel in [Releases](../../releases). API reference: [`docs/api.md`](https://github.com/sjpupro-lab/bcb/blob/main/docs/api.md) (dev repo).
 
 **Linking against the prebuilt library** — download the platform bundle from
 [Releases](../../releases), then point your build at the included `bcb.h` and `libbcb`:
@@ -175,7 +175,8 @@ bcb_prior_close(p);
 cc your_app.c -I/path/to/bcb/include -L/path/to/bcb/lib -lbcb -o your_app
 ```
 
-A CMake consumer example (`find_package(bcb)` / direct link) is in [`examples/`](examples/).
+A CMake consumer example (`find_package(bcb)` / direct link) is in the dev repo
+[`examples/`](https://github.com/sjpupro-lab/bcb/tree/main/examples).
 No source build is required or provided.
 
 -----
